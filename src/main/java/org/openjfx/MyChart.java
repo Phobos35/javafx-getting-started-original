@@ -1,5 +1,6 @@
 package org.openjfx;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
@@ -15,16 +16,21 @@ import java.util.Random;
 public class MyChart extends VBox {
     XYChart.Series<Double , Double> series = new XYChart.Series<>();
     private Random rdx = new Random();
+    private double x=0;
+    private double x_max=10;
+
+    NumberAxis xAxis = new NumberAxis ("Time Constant " , 0.0 , x_max , 1 );
 
     public MyChart() {
         getChildren().add(buildSampleLineChart());
         Button myButton= new Button("Click me");
+
         myButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                for (int i=0; i<10000; i++) {
-                    series.getData().add(new XYChart.Data<>(rdx.nextDouble()*5 ,rdx.nextDouble()));
-                }
+                //for (int i = 0; i < 10000; i++) {
+                    //series.getData().add(new XYChart.Data<>(rdx.nextDouble() * 5, rdx.nextDouble()));
+                //}
             }
         });
         getChildren().add(myButton);
@@ -40,11 +46,49 @@ public class MyChart extends VBox {
         series.getData().add(new XYChart.Data<>(4.0 , 0.982)) ;
         series.getData().add(new XYChart.Data<>(5.0 , 0.993)) ;*/
         LineChart lc = new LineChart (
-                new NumberAxis ("Time Constant " , 0.0 , 5.0 , 1 ) ,
+                xAxis ,
                 new NumberAxis(" Voltage (Vs ) " , 0.0 , 1.0 , 0.1 )
         ) ;
+
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Runnable updater = new Runnable() {
+                    @Override
+                    public void run() {
+                        series.getData().add(new XYChart.Data<>(x, Math.sin(x)));
+                        x++;
+                        if(series.getData().size()>x_max){
+                            series.getData().remove(0);
+                            xAxis.setLowerBound(x-x_max);
+                            xAxis.setUpperBound(x);
+
+
+                        }
+                    }
+                };
+                while(true) {
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException ex) {
+
+                    }
+                    Platform.runLater(updater);
+                }
+            }
+        });
+        thread.setDaemon(true);
+        thread.start();
+
         lc.getData().add(series) ;
         return lc ;
     }
 
+    public XYChart.Series<Double, Double> getSeries() {
+        return series;
+    }
+
+    public Random getRdx() {
+        return rdx;
+    }
 }
