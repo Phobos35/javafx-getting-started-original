@@ -28,6 +28,12 @@ public class MyChart extends VBox {
         myButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
+                /*try {
+                    Thread.sleep(10000);
+                } catch (InterruptedException ex) {
+
+                }*/
+
                 //for (int i = 0; i < 10000; i++) {
                     //series.getData().add(new XYChart.Data<>(rdx.nextDouble() * 5, rdx.nextDouble()));
                 //}
@@ -56,9 +62,9 @@ public class MyChart extends VBox {
                 Runnable updater = new Runnable() {
                     @Override
                     public void run() {
-                        series.getData().add(new XYChart.Data<>(x, Math.sin(x)));
-                        x++;
-                        if(series.getData().size()>x_max){
+                        series.getData().add(new XYChart.Data<>(x, (Math.sin(x)+1)/2));
+                        x+=0.1;
+                        if(x>x_max){
                             series.getData().remove(0);
                             xAxis.setLowerBound(x-x_max);
                             xAxis.setUpperBound(x);
@@ -69,7 +75,7 @@ public class MyChart extends VBox {
                 };
                 while(true) {
                     try {
-                        Thread.sleep(1000);
+                        Thread.sleep(100);
                     } catch (InterruptedException ex) {
 
                     }
