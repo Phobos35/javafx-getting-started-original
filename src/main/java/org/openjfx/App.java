@@ -21,6 +21,7 @@ public class App extends Application {
         scene.getStylesheets().add(App.class.getResource("styles.css").toExternalForm());
         stage.setScene(scene);
         stage.show();
+
     }
 
     static void setRoot(String fxml) throws IOException {

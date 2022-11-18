@@ -4,6 +4,7 @@ import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.Event;
 import javafx.event.EventHandler;
+
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -14,9 +15,11 @@ import java.util.Random;
 
 
 public class MyChart extends VBox {
-    XYChart.Series<Double , Double> series = new XYChart.Series<>();
+
+
+    static XYChart.Series<Double , Double> series = new XYChart.Series<>();
     private Random rdx = new Random();
-    private double x=0;
+    private static double x=0;
     private double x_max=10;
 
     NumberAxis xAxis = new NumberAxis ("Time Constant " , 0.0 , x_max , 1 );
@@ -42,6 +45,14 @@ public class MyChart extends VBox {
         getChildren().add(myButton);
     }
 
+    public static void add(Double valueOf) {
+        series.getData().add(new XYChart.Data<>(x,valueOf));
+        System.out.println(series);
+        x+=1;
+        System.out.println("x="+x);
+
+    }
+
     public LineChart buildSampleLineChart(){
         /*XYChart.Series<Double , Double> series = new XYChart.Series<>();
         series.getData().add(new XYChart.Data<>(0.0 ,0.0)) ;
@@ -56,13 +67,14 @@ public class MyChart extends VBox {
                 new NumberAxis(" Voltage (Vs ) " , 0.0 , 1.0 , 0.1 )
         ) ;
 
-        Thread thread = new Thread(new Runnable() {
+        /*Thread thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 Runnable updater = new Runnable() {
                     @Override
                     public void run() {
-                        series.getData().add(new XYChart.Data<>(x, (Math.sin(x)+1)/2));
+                        //series.getData().add(new XYChart.Data<>(x, (Math.sin(x)+1)/2));
+                        series.getData().add(new XYChart.Data<>(x, rdx.nextDouble()));
                         x+=0.1;
                         if(x>x_max){
                             series.getData().remove(0);
@@ -84,7 +96,7 @@ public class MyChart extends VBox {
             }
         });
         thread.setDaemon(true);
-        thread.start();
+        thread.start();*/
 
         lc.getData().add(series) ;
         return lc ;
@@ -97,4 +109,6 @@ public class MyChart extends VBox {
     public Random getRdx() {
         return rdx;
     }
+
+
 }
